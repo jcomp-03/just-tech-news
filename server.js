@@ -17,6 +17,14 @@ app.use(routes);
 // this is Sequelize taking the models and connecting 
 // them to associated database tables. If it doesn't find a
 // table, it'll create it for you!
+
+// If we change the value of the force property to true,
+// then the database connection must sync with the model
+// definitions and associations. By forcing the sync method
+// to true, we will make the tables re-create if there are
+// any association changes. This definition performs similarly
+// to DROP TABLE IF EXISTS, which was used previously.
+// This allows the table to be overwritten and re-created.
 sequelize.sync({ force: false }).then(() => {
   app.listen(PORT, () => console.log('Now listening'));
 });

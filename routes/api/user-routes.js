@@ -53,7 +53,7 @@ router.post('/', (req, res) => {
     });
 });
 
-// post /api/users/login, for authenticating login
+// POST /api/users/login, for authenticating login
 router.post('/login', (req, res) => {
   // expects {email: 'lernantino@gmail.com', password: 'password1234'}
     User.findOne({

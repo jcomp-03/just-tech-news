@@ -7,9 +7,10 @@
 // prefixing them with the path /users at that time (in this file on line 13).
 
 const router = require('express').Router();
-
 const userRoutes = require('./user-routes.js');
+const postRoutes = require('./post-routes.js');
 
 router.use('/users', userRoutes);
+router.use('/posts', postRoutes);
 
 module.exports = router;
