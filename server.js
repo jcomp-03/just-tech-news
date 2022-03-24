@@ -25,6 +25,12 @@ app.use(routes);
 // any association changes. This definition performs similarly
 // to DROP TABLE IF EXISTS, which was used previously.
 // This allows the table to be overwritten and re-created.
+
+// True or False? Do we need to drop the tables if we introduce
+// changes to the model associations in Sequelize? Yes, we do
+// this by making Sequelize create new tables if the data model
+// or model associations have changed by using the command
+// sequelize.sync({force:true}) in the server.js file.
 sequelize.sync({ force: false }).then(() => {
   app.listen(PORT, () => console.log('Now listening'));
 });
