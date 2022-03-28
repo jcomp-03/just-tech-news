@@ -10,6 +10,8 @@ const { Post, User, Comment } = require('../models');
 // argument, an object, which includes all of the data you
 // want to pass to your template.
 router.get('/', (req, res) => {
+  console.log(req.session);
+
   Post.findAll({
     attributes: [
       'id',
@@ -43,5 +45,17 @@ router.get('/', (req, res) => {
       res.status(500).json(err);
     });
 });
+
+router.get('/login', (req, res) => {
+  // loggedIn is a property of the Session object,
+  // if its value is true, then redirecto to the homepage
+  if(req.session.loggedIn) {
+    res.redirect('/');
+    return;
+  }
+
+  res.render('login');
+});
+
 
 module.exports = router;
