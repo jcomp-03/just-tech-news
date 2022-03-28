@@ -1,4 +1,4 @@
-// impor the Sequelize constructor from the library
+// import the Sequelize constructor from the library
 const Sequelize = require('sequelize');
 
 // pull in the MySQL database name, username, and password saved in .env file
