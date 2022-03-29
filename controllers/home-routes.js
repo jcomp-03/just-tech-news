@@ -56,7 +56,7 @@ router.get('/login', (req, res) => {
     res.redirect('/');
     return;
   }
-
+  // if loggedIn is not true, then render the login.handlebars view
   res.render('login');
 });
 
