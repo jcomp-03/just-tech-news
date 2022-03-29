@@ -174,6 +174,19 @@ router.put('/:id', (req, res) => {
 
 // DELETE /api/users/1
 router.delete('/:id', (req, res) => {
+    let uname;
+    let uid = req.params.id
+
+    User.findOne({
+      attributes: { exclude: ['email', 'password'] },
+      where: {
+        id: req.params.id
+      }
+    })
+    .then(dbUserData => {
+      uname = dbUserData.dataValues.username;
+    });     
+
     User.destroy({
       where: {
         id: req.params.id
@@ -184,7 +197,7 @@ router.delete('/:id', (req, res) => {
           res.status(404).json({ message: 'No user found with this id' });
           return;
         }
-        res.json(dbUserData);
+        res.json(`User ${uname} with id ${uid} has been deleted.`);
     })
     .catch(err => {
         console.log(err);

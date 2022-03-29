@@ -9,7 +9,7 @@ async function signupFormHandler(event){
     const password = document.querySelector('#password-signup').value.trim();
 
     /* Once we have the username, email, and password, make a 
-    fetch() POST request to the /api/users/ */
+    fetch() POST request to the /api/users/ endpoint. */
     //make sure all fields have values
     if(username && email && password){
         const response = await fetch('/api/users', {
@@ -24,7 +24,7 @@ async function signupFormHandler(event){
         
         // check the response status
         if(response.ok) {
-            console.log('success');
+            console.log(`Success! User ${username} has been created successfully!`);
         } else {
             alert(response.statusText);
         }
