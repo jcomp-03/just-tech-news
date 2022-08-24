@@ -4,7 +4,7 @@
 // Remember how in user-routes.js we didn't use the word 'users' in
 // any routes? That's because in that file we take those routes and
 // implement them to another router instance (in this file index.js), 
-// prefixing them with the path /users at that time (in this file on line 13).
+// prefixing them with the path /users at that time (in this file on line 15).
 
 const router = require('express').Router();
 const userRoutes = require('./user-routes.js');

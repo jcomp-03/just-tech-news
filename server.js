@@ -1,12 +1,37 @@
 const express = require('express');
-const routes = require('./routes');
+const routes = require('./controllers');
 const sequelize = require('./config/connection'); // this require brings in the Sequelize ORM
+const path = require('path');
+const exphbs = require('express-handlebars');
+const helpers = require('./utils/helpers');
+const hbs = exphbs.create({ helpers });
+const session = require('express-session');
+const SequelizeStore = require('connect-session-sequelize')(session.Store);
+const sess = {
+  secret: 'Super secret secret',
+  //All we need to do to tell our
+  // session to use cookies is to set cookie to be {}.
+  cookie: {},
+  resave: false,
+  saveUninitialized: true,
+  store: new SequelizeStore({
+    db: sequelize
+  })
+};
+
 
 const app = express();
 const PORT = process.env.PORT || 3001;
 
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
+app.use(express.static(path.join(__dirname, 'public')));
+// This code sets up an Express.js session and
+// connects the session to our Sequelize database
+app.use(session(sess));
+
+app.engine('handlebars', hbs.engine);
+app.set('view engine', 'handlebars');
 
 // turn on routes
 app.use(routes);
@@ -32,5 +57,5 @@ app.use(routes);
 // or model associations have changed by using the command
 // sequelize.sync({force:true}) in the server.js file.
 sequelize.sync({ force: false }).then(() => {
-  app.listen(PORT, () => console.log('Now listening'));
+  app.listen(PORT, () => console.log(`************* Now listening on port ${PORT} *************`));
 });

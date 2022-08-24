@@ -1,5 +1,6 @@
 const router = require('express').Router();
 const { User, Post, Vote, Comment } = require('../../models');
+const withAuth = require('../../utils/auth');
 
 // GET /api/users
 router.get('/', (req, res) => {
@@ -62,7 +63,7 @@ router.get('/:id', (req, res) => {
 });
 
 // POST /api/users
-router.post('/', (req, res) => {
+router.post('/', withAuth, (req, res) => {
     // expects {username: 'Lernantino', email: 'lernantino@gmail.com', password: 'password1234'}
     User.create({
       // Pass in key/value pairs where the keys are what we 
@@ -70,9 +71,22 @@ router.post('/', (req, res) => {
       // we get from req.body.
       username: req.body.username,
       email: req.body.email,
-      password: req.body.password
+      password: req.body.password,
     })
-    .then(dbUserData => res.json(dbUserData))
+    .then(dbUserData => {
+      // We want to make sure the session is created before
+      // we send the response back, so we're wrapping the
+      // variables in a callback. The req.session.save() method
+      // will initiate the creation of the session and then run
+      // the callback function once complete.
+      req.session.save(() => {
+        req.session.user_id = dbUserData.id;
+        req.session.username = dbUserData.username;
+        req.session.loggedIn = true;
+    
+        res.json(dbUserData);
+      });
+    })
     .catch(err => {
         console.log(err);
         res.status(500).json(err);
@@ -80,7 +94,7 @@ router.post('/', (req, res) => {
 });
 
 // POST /api/users/login, for authenticating login
-router.post('/login', (req, res) => {
+router.post('/login', withAuth, (req, res) => {
   // expects {email: 'lernantino@gmail.com', password: 'password1234'}
     User.findOne({
       where: {
@@ -111,13 +125,30 @@ router.post('/login', (req, res) => {
         return;
       }
       
-      // if entered password matches hashed password, send back the following
-      res.json({ user: dbUserData, message: 'You are now logged in!' });
+      req.session.save(() => {
+        // declare session variables
+        req.session.user_id = dbUserData.id;
+        req.session.username = dbUserData.username;
+        req.session.loggedIn = true;
+        // if entered password matches hashed password, send back the following
+        res.json({ user: dbUserData, message: 'You are now logged in!' });
+      });
     });  
 });
 
+router.post('/logout', withAuth, (req, res) => {
+  if (req.session.loggedIn) {
+    req.session.destroy(() => {
+      res.status(204).end();
+    });
+  }
+  else {
+    res.status(404).end();
+  }
+})
+
 // PUT /api/users/1
-router.put('/:id', (req, res) => {
+router.put('/:id', withAuth, (req, res) => {
     // expects {username: 'Lernantino', email: 'lernantino@gmail.com', password: 'password1234'}
     // if req.body has exact key/value pairs to match the model, you can just use `req.body` instead
     // This .update() method combines the parameters for creating data and looking up data.
@@ -143,7 +174,20 @@ router.put('/:id', (req, res) => {
 });
 
 // DELETE /api/users/1
-router.delete('/:id', (req, res) => {
+router.delete('/:id', withAuth, (req, res) => {
+    let uname;
+    let uid = req.params.id
+
+    User.findOne({
+      attributes: { exclude: ['email', 'password'] },
+      where: {
+        id: req.params.id
+      }
+    })
+    .then(dbUserData => {
+      uname = dbUserData.dataValues.username;
+    });     
+
     User.destroy({
       where: {
         id: req.params.id
@@ -154,12 +198,14 @@ router.delete('/:id', (req, res) => {
           res.status(404).json({ message: 'No user found with this id' });
           return;
         }
-        res.json(dbUserData);
+        res.json(`User ${uname} with id ${uid} has been deleted.`);
     })
     .catch(err => {
         console.log(err);
         res.status(500).json(err);
     });
-  });
+});
+
+
 
 module.exports = router;
