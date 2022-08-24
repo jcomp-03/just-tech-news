@@ -22,10 +22,6 @@ so users won't see any of this content if they have no posts}}
   <ol>
     {{#each posts as |post|}}
     <li>
-        {{! We're also using the post-info partial that we set
-         up earlier to display the details for each post. 
-         we're adding a link below it that will route users to a
-         separate edit page (e.g., /dashboard/edit/1).}}
       {{> post-info post}}
       <a href="/dashboard/edit/{{post.id}}" class="edit-link">Edit post</a>
     </li>
@@ -33,3 +29,5 @@ so users won't see any of this content if they have no posts}}
   </ol>
 </section>
 {{/if}}
+
+<script src="/javascript/add-post.js"></script>

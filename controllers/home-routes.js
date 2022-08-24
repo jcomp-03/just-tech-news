@@ -33,25 +33,24 @@ router.get('/', (req, res) => {
       }
     ]
   })
-    .then(dbPostData => {
-      const posts = dbPostData.map(post => post.get({ plain: true }));
-      // now the login and logout links will conditionally render 
-      // based on the user's session, and this works across all pages!
-      res.render('homepage', {
-        posts,
-        loggedIn: req.session.loggedIn
-      });
-    })
-    .catch(err => {
-      console.log(err);
-      res.status(500).json(err);
+  .then(dbPostData => {
+    const posts = dbPostData.map(post => post.get({ plain: true }));
+    // now the login and logout links will conditionally render 
+    // based on the user's session, and this works across all pages!
+    res.render('homepage', {
+      posts,
+      loggedIn: req.session.loggedIn
     });
+  })
+  .catch(err => {
+    console.log(err);
+    res.status(500).json(err);
+  });
 });
-
 
 router.get('/login', (req, res) => {
   // loggedIn is a property of the Session object,
-  // if its value is true, then redirecto to the homepage
+  // if its value is true, then redirect to to the homepage
   if(req.session.loggedIn) {
     res.redirect('/');
     return;
@@ -59,7 +58,6 @@ router.get('/login', (req, res) => {
   // if loggedIn is not true, then render the login.handlebars view
   res.render('login');
 });
-
 
 router.get('/post/:id', (req, res) => {
   Post.findOne({

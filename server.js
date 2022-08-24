@@ -57,5 +57,5 @@ app.use(routes);
 // or model associations have changed by using the command
 // sequelize.sync({force:true}) in the server.js file.
 sequelize.sync({ force: false }).then(() => {
-  app.listen(PORT, () => console.log('Now listening'));
+  app.listen(PORT, () => console.log(`************* Now listening on port ${PORT} *************`));
 });

@@ -20,7 +20,6 @@ Post.belongsTo(User, {
     foreignKey: 'user_id',
 });
 
-
 User.belongsToMany(Post, {
     through: Vote,
     as: 'voted_posts',
